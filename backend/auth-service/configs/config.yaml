@@ -1,0 +1,11 @@
+env: 'local'
+database:
+  dialect: 'postgres'
+  host: 'localhost'
+  port: '5432'
+  name: 'auth-service'
+  username: 'postgres'
+  migration: true
+grpc:
+  port: 50051
+  timeout: 10s
