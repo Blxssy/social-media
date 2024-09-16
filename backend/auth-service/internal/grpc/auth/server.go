@@ -5,7 +5,7 @@ import (
 	"errors"
 	"google.golang.org/grpc/metadata"
 
-	pb "github.com/Blxssy/social-media/auth-service/api/auth"
+	pb "github.com/Blxssy/social-media/backend/auth-service/api/auth"
 	"google.golang.org/grpc"
 )
 
@@ -20,7 +20,7 @@ type Auth interface {
 }
 
 type ServerAPI struct {
-	pb.UnsafeAuthServiceServer
+	pb.UnimplementedAuthServiceServer
 	auth Auth
 }
 

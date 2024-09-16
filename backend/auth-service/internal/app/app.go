@@ -14,7 +14,7 @@ type App struct {
 }
 
 func New(log *slog.Logger, grpcPort int, storage storage.Storage) *App {
-	authService := auth.New(log, storage, storage)
+	authService := auth.New(log, storage, storage, storage)
 
 	grpcApp := grpcapp.New(log, authService, grpcPort)
 

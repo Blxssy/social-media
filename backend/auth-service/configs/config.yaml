@@ -9,3 +9,9 @@ database:
 grpc:
   port: 50051
   timeout: 10s
+redis:
+  host: '127.0.0.1'
+  port: 6379
+token:
+  accessTokenTTL: 15m
+  refreshTokenTTL: 7d

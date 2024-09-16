@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Blxssy/social-media/auth-service/internal/models"
-	"github.com/Blxssy/social-media/auth-service/pkg/token"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/models"
+	"github.com/Blxssy/social-media/backend/auth-service/pkg/token"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
 )
@@ -18,6 +18,7 @@ type Auth struct {
 	log         *slog.Logger
 	usrSaver    UserSaver
 	usrProvider UserProvider
+	tokenSaver  TokenSaver
 }
 
 type UserSaver interface {
@@ -29,15 +30,21 @@ type UserProvider interface {
 	IsAdmin(ct context.Context, userID int) (bool, error)
 }
 
+type TokenSaver interface {
+	SaveTokens(ctx context.Context, uid uint, accessToken string, refreshToken string) error
+}
+
 func New(
 	log *slog.Logger,
 	usrSaver UserSaver,
 	usrProvider UserProvider,
+	tokenSaver TokenSaver,
 ) *Auth {
 	return &Auth{
 		log:         log,
 		usrSaver:    usrSaver,
 		usrProvider: usrProvider,
+		tokenSaver:  tokenSaver,
 	}
 }
 
@@ -74,6 +81,8 @@ func (a *Auth) Register(ctx context.Context, username, email, password string) (
 		return "", "", fmt.Errorf("%s: %w", op, err)
 	}
 
+	a.tokenSaver.SaveTokens(ctx, user.ID, accessToken, refreshToken)
+
 	return accessToken, refreshToken, nil
 }
 
@@ -100,6 +109,8 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, strin
 		log.Error("failed to get new tokens")
 		return "", "", fmt.Errorf("%s: %w", op, err)
 	}
+
+	a.tokenSaver.SaveTokens(ctx, user.ID, accessToken, refreshToken)
 
 	return accessToken, refreshToken, nil
 }

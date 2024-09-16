@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Blxssy/social-media/auth-service/internal/app"
-	"github.com/Blxssy/social-media/auth-service/internal/config"
-	"github.com/Blxssy/social-media/auth-service/internal/storage"
-	"github.com/Blxssy/social-media/auth-service/pkg/logger"
-	"github.com/Blxssy/social-media/auth-service/pkg/token"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/app"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/config"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/storage"
+	"github.com/Blxssy/social-media/backend/auth-service/pkg/logger"
+	"github.com/Blxssy/social-media/backend/auth-service/pkg/token"
 	"github.com/joho/godotenv"
 	"os"
 	"os/signal"

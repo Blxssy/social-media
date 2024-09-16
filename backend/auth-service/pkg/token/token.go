@@ -10,11 +10,12 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-const accessTokenDuration = time.Minute * 15
-const refreshTokenDuration = time.Hour * 24 * 7
+const AccessTokenDuration = time.Minute * 15
+const RefreshTokenDuration = time.Hour * 24 * 7
 
 func InitJWTKey() {
 	jwtKey = []byte(os.Getenv("JWT_KEY"))
+	fmt.Println(string(jwtKey))
 }
 
 var jwtKey []byte
@@ -26,13 +27,13 @@ type Claims struct {
 
 func GetNewTokens(userID uint) (string, string, error) {
 	// TODO: Вынести TTL в конфиг
-	accessToken, err := NewToken(userID, accessTokenDuration)
+	accessToken, err := NewToken(userID, AccessTokenDuration)
 	if err != nil {
 		log.Fatal(err)
 		return "", "", nil
 	}
 
-	refreshToken, err := NewToken(userID, refreshTokenDuration)
+	refreshToken, err := NewToken(userID, RefreshTokenDuration)
 	if err != nil {
 		log.Fatal(err)
 		return "", "", nil

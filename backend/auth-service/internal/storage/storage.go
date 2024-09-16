@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Blxssy/social-media/auth-service/internal/config"
-	"github.com/Blxssy/social-media/auth-service/internal/models"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/config"
+	"github.com/Blxssy/social-media/backend/auth-service/internal/models"
+	"github.com/Blxssy/social-media/backend/auth-service/pkg/token"
+	"github.com/go-redis/redis/v8"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,10 +18,12 @@ type Storage interface {
 	SaveUser(ctx context.Context, username string, email string, passHash []byte) error
 	User(ct context.Context, email string) (*models.User, error)
 	IsAdmin(ct context.Context, userID int) (bool, error)
+	SaveTokens(ctx context.Context, uid uint, accessToken string, refreshToken string) error
 }
 
 type storage struct {
-	db *gorm.DB
+	db    *gorm.DB
+	redis *redis.Client
 }
 
 func NewStorage(logger *slog.Logger, config *config.Config) Storage {
@@ -30,6 +34,7 @@ func NewStorage(logger *slog.Logger, config *config.Config) Storage {
 	}
 	logger.Info("Successfully connection to database")
 
+	db.Migrator().DropTable(&models.User{})
 	db.AutoMigrate(&models.User{})
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte("pass"), bcrypt.DefaultCost)
@@ -42,8 +47,17 @@ func NewStorage(logger *slog.Logger, config *config.Config) Storage {
 	}
 	db.Create(&Admin)
 
+	addr := fmt.Sprintf("%s:%d", config.Redis.Host, config.Redis.Port)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: addr,
+	})
+
+	logger.Info("Successfully connected to redis")
+	logger.Info(addr)
+
 	return &storage{
-		db: db,
+		db:    db,
+		redis: redisClient,
 	}
 }
 
@@ -110,4 +124,12 @@ func (s *storage) findByID(ctx context.Context, uid int) (*models.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (s *storage) SaveTokens(ctx context.Context, uid uint, accessToken string, refreshToken string) error {
+	err := s.redis.Set(ctx, "access_token:"+string(uid), accessToken, token.AccessTokenDuration).Err()
+	if err != nil {
+		return err
+	}
+	return s.redis.Set(ctx, "refresh_token:"+string(uid), refreshToken, token.RefreshTokenDuration).Err()
 }

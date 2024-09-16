@@ -11,6 +11,8 @@ type Config struct {
 	Env      string     `yaml:"env" envDefault:"local"`
 	Database Database   `yaml:"database"`
 	GRPC     GRPCConfig `yaml:"grpc"`
+	Redis    Redis      `yaml:"redis"`
+	Token    Token      `yaml:"token"`
 }
 
 type Database struct {
@@ -26,6 +28,16 @@ type Database struct {
 type GRPCConfig struct {
 	Port    int           `yaml:"port"`
 	Timeout time.Duration `yaml:"timeout"`
+}
+
+type Redis struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+type Token struct {
+	accessTokenTTL  time.Duration `yaml:"accessTokenTTL"`
+	refreshTokenTTL time.Duration `yaml:"refreshTokenTTL"`
 }
 
 func LoadConfig() *Config {
