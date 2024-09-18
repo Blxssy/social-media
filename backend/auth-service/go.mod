@@ -3,7 +3,6 @@ module github.com/Blxssy/social-media/auth-service
 go 1.22.5
 
 require (
-	github.com/Blxssy/social-media/backend/auth-service v0.0.0-20240916110800-55ebcc7b1d26
 	github.com/fatih/color v1.17.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
