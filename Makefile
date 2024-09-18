@@ -10,6 +10,7 @@ get-deps:
 
 generate:
 	 make generate-auth-api
+	 make generate-user-api
 
 generate-auth-api:
 	mkdir -p backend/auth-service/api/auth
@@ -19,6 +20,15 @@ generate-auth-api:
             --go-grpc_out=backend/auth-service/api/auth --go-grpc_opt=paths=source_relative \
             --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
             shared/proto/auth/auth.proto``
+
+generate-user-api:
+	# mkdir -p backend/user-service/api/user
+	protoc --proto_path shared/proto/user \
+            --go_out=backend/user-service/api/user --go_opt=paths=source_relative \
+            --plugin=protoc-gen-go=bin/protoc-gen-go \
+            --go-grpc_out=backend/user-service/api/user --go-grpc_opt=paths=source_relative \
+            --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+            shared/proto/user/user.proto``
 
 run:
 	make run-auth-service

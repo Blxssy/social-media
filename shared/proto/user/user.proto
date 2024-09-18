@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/Blxssy/social-media/user-service/api/user;user";
+
+service UserService {
+	rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+	rpc GetUser (GetUserRequest) returns (GetUserResponse);
+}
+
+message User {
+	string username = 1;
+	string email = 2;
+}
+
+message CreateUserRequest {
+	string username = 1;
+	string email = 2;
+	string password = 3;
+}
+
+message CreateUserResponse {
+	User user = 1;
+}
+
+message GetUserRequest {
+	string email = 1;
+}
+
+message GetUserResponse {
+	User user = 1;
+}
