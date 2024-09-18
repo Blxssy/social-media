@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Blxssy/social-media/backend/auth-service/internal/models"
-	"github.com/Blxssy/social-media/backend/auth-service/pkg/token"
+	"github.com/Blxssy/social-media/auth-service/internal/models"
+	"github.com/Blxssy/social-media/auth-service/pkg/token"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
 )

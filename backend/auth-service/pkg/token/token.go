@@ -15,7 +15,6 @@ const RefreshTokenDuration = time.Hour * 24 * 7
 
 func InitJWTKey() {
 	jwtKey = []byte(os.Getenv("JWT_KEY"))
-	fmt.Println(string(jwtKey))
 }
 
 var jwtKey []byte

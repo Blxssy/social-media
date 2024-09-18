@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/Blxssy/social-media/backend/auth-service/internal/app"
-	"github.com/Blxssy/social-media/backend/auth-service/internal/config"
-	"github.com/Blxssy/social-media/backend/auth-service/internal/storage"
+	"github.com/Blxssy/social-media/auth-service/internal/app"
+	"github.com/Blxssy/social-media/auth-service/internal/config"
+	"github.com/Blxssy/social-media/auth-service/internal/storage"
 	"github.com/Blxssy/social-media/backend/auth-service/pkg/logger"
 	"github.com/Blxssy/social-media/backend/auth-service/pkg/token"
 	"github.com/joho/godotenv"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -19,6 +20,8 @@ func main() {
 	cfg := config.LoadConfig()
 
 	logger := logger.SetupLogger(cfg.Env)
+
+	logger.Info("cfg", slog.Any("cfg", cfg))
 
 	store := storage.NewStorage(logger, cfg)
 
