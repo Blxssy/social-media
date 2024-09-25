@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/Blxssy/social-media/auth-service/internal/config"
 	"github.com/Blxssy/social-media/auth-service/internal/models"
 	"github.com/Blxssy/social-media/auth-service/pkg/token"
@@ -11,11 +13,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log/slog"
 )
 
 type Storage interface {
-	SaveUser(ctx context.Context, username string, email string, passHash []byte) error
+	SaveUser(ctx context.Context, username string, email string, passHash []byte) (*models.User, error)
 	User(ct context.Context, email string) (*models.User, error)
 	IsAdmin(ct context.Context, userID int) (bool, error)
 	SaveTokens(ctx context.Context, uid uint, accessToken string, refreshToken string) error
@@ -37,10 +38,10 @@ func NewStorage(logger *slog.Logger, config *config.Config) Storage {
 	db.Migrator().DropTable(&models.User{})
 	db.AutoMigrate(&models.User{})
 
-	passHash, err := bcrypt.GenerateFromPassword([]byte("pass"), bcrypt.DefaultCost)
+	passHash, _ := bcrypt.GenerateFromPassword([]byte("pass"), bcrypt.DefaultCost)
 	Admin := models.User{
 		Model:    gorm.Model{},
-		Username: "Anton Sonin",
+		Username: "Anton",
 		Email:    "test@test.com",
 		PassHash: string(passHash),
 		IsAdmin:  true,
@@ -53,7 +54,6 @@ func NewStorage(logger *slog.Logger, config *config.Config) Storage {
 	})
 
 	logger.Info("Successfully connected to redis")
-	logger.Info(addr)
 
 	return &storage{
 		db:    db,
@@ -68,10 +68,10 @@ func connectDatabase(config *config.Config) (*gorm.DB, error) {
 	return gorm.Open(postgres.Open(dsn))
 }
 
-func (s *storage) SaveUser(ctx context.Context, username string, email string, passHash []byte) error {
+func (s *storage) SaveUser(ctx context.Context, username string, email string, passHash []byte) (*models.User, error) {
 	u, _ := s.findByEmail(ctx, email)
 	if u != nil {
-		return errors.New("User already exists")
+		return nil, errors.New("User already exists")
 	}
 
 	user := &models.User{
@@ -82,10 +82,10 @@ func (s *storage) SaveUser(ctx context.Context, username string, email string, p
 
 	err := s.db.Create(user).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return user, nil
 }
 
 func (s *storage) User(ctx context.Context, email string) (*models.User, error) {

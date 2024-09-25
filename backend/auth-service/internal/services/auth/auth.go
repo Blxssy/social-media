@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/Blxssy/social-media/auth-service/internal/models"
 	"github.com/Blxssy/social-media/auth-service/pkg/token"
 	"golang.org/x/crypto/bcrypt"
-	"log/slog"
 )
 
 var (
@@ -22,7 +23,7 @@ type Auth struct {
 }
 
 type UserSaver interface {
-	SaveUser(ctx context.Context, username string, email string, passHash []byte) error
+	SaveUser(ctx context.Context, username string, email string, passHash []byte) (*models.User, error)
 }
 
 type UserProvider interface {
@@ -64,13 +65,7 @@ func (a *Auth) Register(ctx context.Context, username, email, password string) (
 		return "", "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	user := models.User{
-		Username: username,
-		Email:    email,
-		PassHash: string(passHash),
-	}
-
-	err = a.usrSaver.SaveUser(ctx, username, user.Email, passHash)
+	user, err := a.usrSaver.SaveUser(ctx, username, email, passHash)
 	if err != nil {
 		return "", "", err
 	}
