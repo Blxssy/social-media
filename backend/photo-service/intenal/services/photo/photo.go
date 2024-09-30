@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -38,7 +39,9 @@ func (p *Photo) UploadPhoto(ctx context.Context, photoData []byte, filename stri
 		return 0, fmt.Errorf("failed to create request for Yandex Disk: %v", err)
 	}
 
-	req.Header.Set("Authorization", "OAuth YOUR_YANDEX_DISK_TOKEN")
+	authHeader := fmt.Sprintf("OAuth %s", os.Getenv("YANDEX_DISK_TOKEN"))
+	fmt.Println(yandexDiskUploadURL, authHeader)
+	req.Header.Set("Authorization", authHeader)
 	req.Header.Set("Content-Type", "application/octet-stream")
 
 	client := &http.Client{}

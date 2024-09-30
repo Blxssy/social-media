@@ -1,12 +1,9 @@
 package photo
 
 import (
-	"bytes"
 	"context"
-	"fmt"
 	pb "github.com/Blxssy/social-media/photo-service/api/photo"
 	"github.com/Blxssy/social-media/photo-service/intenal/models"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"google.golang.org/grpc"
 )
@@ -47,19 +44,15 @@ func Register(grpcServer *grpc.Server, photo Photo) {
 // - req: запрос, содержащий данные фотографии, такие как байты файла, имя файла и идентификатор пользователя.
 // Возвращает ответ с идентификатором загруженной фотографии или ошибку.
 func (s *ServerAPI) UploadPhoto(ctx context.Context, req *pb.UploadPhotoRequest) (*pb.UploadPhotoResponse, error) {
-	reader := bytes.NewReader(req.PhotoData)
-
-	fileKey := fmt.Sprintf("photos/%s", req.Filename)
-	_, err := s.s3svc.PutObject(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String("your-bucket-name"),
-		Key:    aws.String(fileKey),
-		Body:   reader,
-	})
+	photoID, err := s.photo.UploadPhoto(ctx, req.GetPhotoData(), req.GetFilename(), req.GetUserId())
 	if err != nil {
-		return nil, fmt.Errorf("could not upload photo: %v", err)
+		return nil, err
 	}
 
-	return &pb.UploadPhotoResponse{}, nil
+	return &pb.UploadPhotoResponse{
+		PhotoId: photoID,
+		Status:  "Successfully uploaded",
+	}, nil
 }
 
 // GetPhoto - обработчик RPC-запроса для получения информации о фотографии.
