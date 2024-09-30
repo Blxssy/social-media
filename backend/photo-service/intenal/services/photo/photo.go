@@ -22,6 +22,13 @@ type Photo struct {
 	storage storage.Storage
 }
 
+func New(log *slog.Logger, storage storage.Storage) *Photo {
+	return &Photo{
+		log:     log,
+		storage: storage,
+	}
+}
+
 // UploadPhoto - загружает фотографию на Яндекс Диск и сохраняет данные о фото в базе данных.
 // Параметры:
 // - ctx: контекст для управления запросом.

@@ -1,4 +1,11 @@
 env: 'local'
+database:
+  dialect: 'postgres'
+  host: 'postgres'
+  port: '5434'
+  name: 'photo-service'
+  username: 'postgres'
+  migration: true
 grpc:
   port: 50053
   timeout: 10s

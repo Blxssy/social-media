@@ -32,10 +32,10 @@ type storage struct {
 
 // NewStorage - функция для создания нового экземпляра хранилища.
 // Параметры:
-// - logger: логгер для записи событий.
 // - cfg: конфигурация, содержащая параметры подключения к базе данных.
+// - logger: логгер для записи событий.
 // Возвращает экземпляр интерфейса Storage или паникует в случае ошибки соединения.
-func NewStorage(logger *slog.Logger, cfg *config.Config) Storage {
+func NewStorage(cfg *config.Config, logger *slog.Logger) Storage {
 	db, err := connectDatabase(cfg)
 	if err != nil {
 		logger.Error("Failure database connection")
