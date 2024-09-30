@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package photo;
+
+option go_package = "github.com/Blxssy/social-media/photo-service/api/photo;photo";
+
+import "google/protobuf/timestamp.proto";
+
+service PhotoService {
+	rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoResponse);
+	rpc GetPhoto (GetPhotoRequest) returns (GetPhotoResponse);
+	rpc GetUserPhotos (GetUserPhotosRequest) returns (GetUserPhotosResponse);
+}
+
+message Photo {
+	uint64 id = 1;
+	uint64 userID = 2;
+	string ImageURL = 3;
+	uint32 LikesCount = 4;
+	uint32 CommentsCount = 5;
+	repeated string Comments = 6;
+	google.protobuf.Timestamp CreatedAt = 7;
+	google.protobuf.Timestamp UpdatedAt = 8;
+}
+
+message UploadPhotoRequest {
+	bytes photo_data = 1;
+	string filename = 2;
+	uint64 user_id = 4;
+}
+
+message UploadPhotoResponse {
+	uint64 photo_id = 1;
+	string status = 2;
+}
+
+message GetPhotoRequest {
+	string PhotoID = 1;
+}
+
+message GetPhotoResponse {
+	Photo photo = 1;
+}
+
+message GetUserPhotosRequest {
+	uint64 uid = 1;
+}
+
+message GetUserPhotosResponse {
+	repeated Photo photos = 1;
+}
+

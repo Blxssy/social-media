@@ -30,6 +30,15 @@ generate-user-api:
             --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
             shared/proto/user/user.proto``
 
+generate-photo-api:
+	mkdir -p backend/photo-service/api/photo
+	protoc --proto_path shared/proto/photo \
+            --go_out=backend/photo-service/api/photo --go_opt=paths=source_relative \
+            --plugin=protoc-gen-go=bin/protoc-gen-go \
+            --go-grpc_out=backend/photo-service/api/photo --go-grpc_opt=paths=source_relative \
+            --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+            shared/proto/photo/photo.proto``
+
 run:
 	make run-auth-service
 
