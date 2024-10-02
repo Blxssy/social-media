@@ -3,13 +3,13 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: auth-service-postgres
+    container_name: photo-service-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: auth-service
+      POSTGRES_DB: photo-service
     ports:
-      - "5432:5432"
+      - "5434:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -19,45 +19,27 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
 
-  redis:
-    image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  auth-service:
+  photo-service:
     build: .
-    container_name: auth-service-backend
+    container_name: photo-service-backend
     command:
       - ./main
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       - ENV=local
       - CONFIG_PATH=./configs/config.yaml
-      - JWT_KEY=#@!FEWMEKF
       - DATABASE_DIALECT=postgres
       - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=auth-service
+      - DATABASE_PORT=5434
+      - DATABASE_NAME=photo-service
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
       - DB_PASSWORD=postgres
-      - GRPC_PORT=50051
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - TOKEN_ACCESS_TTL=15m
-      - TOKEN_REFRESH_TTL=7d
+      - GRPC_PORT=50053
     ports:
-      - "50051:50051"
+      - "50053:50053"
     env_file:
       - ./.env
 

@@ -1,7 +1,7 @@
 env: 'local'
 database:
   dialect: 'postgres'
-  host: 'postgres'
+  host: 'auth-service-postgres'
   port: '5432'
   name: 'auth-service'
   username: 'postgres'
