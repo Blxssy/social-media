@@ -2,7 +2,7 @@ env: 'local'
 database:
   dialect: 'postgres'
   host: 'postgres'
-  port: '5434'
+  port: '5432'
   name: 'photo-service'
   username: 'postgres'
   migration: true

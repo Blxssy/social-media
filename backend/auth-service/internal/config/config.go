@@ -52,6 +52,7 @@ func LoadConfig() *Config {
 	}
 
 	viper.SetDefault("Database.Password", os.Getenv("DB_PASSWORD"))
+	viper.SetDefault("JWT_KEY", os.Getenv("JWT_KEY"))
 
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {

@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auth-service
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -44,18 +44,8 @@ services:
       - ENV=local
       - CONFIG_PATH=./configs/config.yaml
       - JWT_KEY=#@!FEWMEKF
-      - DATABASE_DIALECT=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=auth-service
-      - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
       - DB_PASSWORD=postgres
-      - GRPC_PORT=50051
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - TOKEN_ACCESS_TTL=15m
-      - TOKEN_REFRESH_TTL=7d
     ports:
       - "50051:50051"
     env_file:

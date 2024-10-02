@@ -14,7 +14,10 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		return 
+	}
 	token.InitJWTKey()
 
 	cfg := config.LoadConfig()

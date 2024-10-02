@@ -30,11 +30,6 @@ services:
     environment:
       - ENV=local
       - CONFIG_PATH=./configs/config.yaml
-      - DATABASE_DIALECT=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5434
-      - DATABASE_NAME=photo-service
-      - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
       - DB_PASSWORD=postgres
       - GRPC_PORT=50053
