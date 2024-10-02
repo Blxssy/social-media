@@ -7,7 +7,10 @@ import (
 	"github.com/Blxssy/social-media/auth-service/pkg/logger"
 	"github.com/Blxssy/social-media/auth-service/pkg/token"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,6 +35,12 @@ func main() {
 
 	go func() {
 		application.GRPCServer.MustRun()
+	}()
+
+	http.Handle("/metrics", promhttp.Handler())
+	log.Printf("Prometheus metrics available at /metrics on port 9090")
+	go func() {
+		log.Fatal(http.ListenAndServe(":9090", nil))
 	}()
 
 	stop := make(chan os.Signal, 1)

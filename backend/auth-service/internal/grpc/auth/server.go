@@ -3,7 +3,9 @@ package auth
 import (
 	"context"
 	"errors"
+	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc/metadata"
+	"log"
 
 	pb "github.com/Blxssy/social-media/auth-service/api/auth"
 	"google.golang.org/grpc"
@@ -12,6 +14,20 @@ import (
 const (
 	emptyValue = 0
 )
+
+var (
+	requestCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "grpc_requests_total",
+			Help: "Total number of gRPC requests",
+		},
+		[]string{"method"},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(requestCounter)
+}
 
 type Auth interface {
 	Register(ctx context.Context, username, email, password string) (string, string, error)
@@ -29,6 +45,7 @@ func Register(grpcServer *grpc.Server, auth Auth) {
 }
 
 func (s *ServerAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+	requestCounter.WithLabelValues("Register").Inc()
 	if err := validateRegister(req); err != nil {
 		return nil, err
 	}
@@ -46,6 +63,8 @@ func (s *ServerAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.
 }
 
 func (s *ServerAPI) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	log.Println("Incrementing Login request counter")
+	requestCounter.WithLabelValues("Login").Inc()
 	if err := validateLogin(req); err != nil {
 		return nil, err
 	}
@@ -62,6 +81,7 @@ func (s *ServerAPI) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginR
 }
 
 func (s *ServerAPI) IsAdmin(ctx context.Context, req *pb.IsAdminRequest) (*pb.IsAdminResponse, error) {
+	requestCounter.WithLabelValues("IsAdmin").Inc()
 	if err := validateIsAdmin(req); err != nil {
 		return nil, err
 	}
